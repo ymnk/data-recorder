@@ -1,0 +1,21 @@
+<lift:surround with="default" at="content">
+  <head><title><lift:loc>Data List</lift:loc></title></head>
+
+  <table>
+    <tr>
+      <th><lift:loc>Title</lift:loc></th>
+      <th><lift:loc>User</lift:loc></th>
+      <th></th>
+    </tr>
+  <lift:DataOps.list>
+    <tr>
+      <td><data:title /></td>
+      <td><data:user /></td>
+      <td><data:show />&nbsp;<data:edit />&nbsp;<data:delete /></td>
+    </tr>
+  </lift:DataOps.list>     
+  </table>
+  <lift:DataOps.addLink>
+    <span>You need to login to add data</span>
+  </lift:DataOps.addLink>
+</lift:surround>

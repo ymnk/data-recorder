@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<datastore-indexes  autoGenerate="true">
+  <datastore-index kind="Data" ancestor="true" source="auto">
+    <property name="data_INTEGER_IDX" direction="asc"/>
+  </datastore-index>
+  <datastore-index kind="Data" ancestor="true" source="auto"/>
+  <datastore-index kind="DataEntry" ancestor="false" source="auto">
+    <property name="data" direction="asc"/>
+    <property name="date" direction="desc"/>
+  </datastore-index>
+  <datastore-index kind="DataEntry" ancestor="false" source="auto">
+    <property name="data" direction="asc"/>
+    <property name="date" direction="asc"/>
+  </datastore-index>
+</datastore-indexes>

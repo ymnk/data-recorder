@@ -1,0 +1,56 @@
+<lift:surround with="default" at="content">
+  <head><title><lift:loc>DataEntry</lift:loc></title></head>
+
+  <lift:DataEntryOps.graph>
+    <graph:title /><br />
+    <graph:image />
+  </lift:DataEntryOps.graph>
+
+  <table>
+  <lift:DataEntryOps.add form="post">
+    <dataentry:id />
+    <tr>
+      <td><label><lift:loc>Date</lift:loc></label></td>
+      <td><dataentry:date /></td>
+    </tr>
+    <tr>
+      <td><label><lift:loc>DataEntry</lift:loc></label></td>
+      <td><dataentry:dataEntry /></td>
+    </tr>
+    <tr><td><dataentry:save /></td></tr>
+  </lift:DataEntryOps.add>     
+  </table>
+
+<lift:snippet type="DataEntryOps:upload" form="post" multipart="true">
+<choose:post>
+<p>
+File name: <ul:file_name/><br />
+MIME Type: <ul:mime_type/><br />
+File length: <ul:length/><br />
+MD5 Hash: <ul:md5/><br />
+</p>
+</choose:post>
+<choose:get>
+<p>
+Select a file to upload: <ul:file_upload/> &nbsp; 
+<input type="submit" value="Upload File"/>
+</p>
+</choose:get>
+</lift:snippet>
+
+  <table>
+    <tr>
+      <th><lift:loc>Date</lift:loc></th>
+      <th><lift:loc>DataEntry</lift:loc></th>
+      <th></th>
+    </tr>
+  <lift:DataEntryOps.list>
+    <tr>
+      <td><dataentry:date /></td>
+      <td><dataentry:dataEntry /></td>
+      <td><dataentry:edit />&nbsp;<dataentry:delete /></td>
+    </tr>
+  </lift:DataEntryOps.list>     
+  </table>
+
+</lift:surround>

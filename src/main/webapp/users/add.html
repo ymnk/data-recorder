@@ -1,0 +1,12 @@
+<lift:surround with="default" at="content">
+  <head><title><lift:loc>Add User</lift:loc></title></head>
+
+  <table>
+  <lift:UserOps.add form="post">
+    <tr><td><label><lift:loc>Email:</lift:loc></label></td><td><user:email /></td></tr>
+    <tr><td><label><lift:loc>Name:</lift:loc></label></td><td><user:name /></td></tr>
+    <tr><td><label><lift:loc>Twitter:</lift:loc></label></td><td><user:twitter /></td></tr>
+    <tr><td><user:submit /></td><td>&nbsp;</td></tr>
+  </lift:UserOps.add>     
+  </table>
+</lift:surround>

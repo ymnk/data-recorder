@@ -1,0 +1,17 @@
+<lift:surround with="default" at="content">
+  <head><title><lift:loc>User List</lift:loc></title></head>
+
+  <table>
+    <tr>
+      <th><lift:loc>Name</lift:loc></th>
+      <th></th>
+    </tr>
+  <lift:UserOps.list>
+    <tr>
+      <td><user:name /></td>
+      <td><user:edit />&nbsp;<user:delete /></td>
+    </tr>
+  </lift:UserOps.list>     
+  <a href="add"><lift:loc>Add</lift:loc></a>
+  </table>
+</lift:surround>
