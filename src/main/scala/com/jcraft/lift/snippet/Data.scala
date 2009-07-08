@@ -77,14 +77,10 @@ class DataOps {
 
     data.flatMap(data =>
       bind("data", xhtml,
-           "title" -> Text(data.title),
+           "title" -> link("showData", 
+                           () => DataEntryOps.dataVar(Some(data)),
+                           Text(data.title)),
            "user" -> Text(data.user.name),
-           "show" -> {if(isEditable(data))
-                        link("showData", 
-                              () => DataEntryOps.dataVar(Some(data)),
-                             textAdd)
-                      else 
-                        textAdd },
            "edit" -> {if(isEditable(data))
                        link("add", () => dataVar(Some(data)), textEdit)
                       else 

@@ -32,7 +32,7 @@ class Account {
     User.currentUser map {user =>
       val logout = userService.createLogoutURL("/")
       <span>
-        Hello, {user.email} &nbsp; 
+        Hello, {user.name} &nbsp; 
         <a href="/users/edit">Settings</a> &nbsp; 
         <a href={logout}>Log out</a>
       </span>

@@ -164,7 +164,9 @@ class DataEntryOps {
       DataOps.resetImage(data.get)
     }
 
-    val isEditable = User.currentUser.isDefined
+    val isEditable = User.currentUser map{ u =>
+      data map (_.user.id == u.id) getOrElse false
+    } getOrElse false
 
     if(isEditable){
       if (S.get_?) 

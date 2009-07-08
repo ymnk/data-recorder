@@ -49,6 +49,8 @@ class User {
 }
 
 object User{
+  import _root_.net.liftweb.http.S
+
   private object userVar extends SessionVar[Option[User]](None)
 
   def loggedIn_? = currentUser.isDefined
@@ -63,7 +65,7 @@ object User{
           // TODO if user.email != u.getEmail
 	  _usr
         case None => 
-          val user = Model.withPM{ from(_, classOf[User])
+          Model.withPM{ from(_, classOf[User])
                                    .where(eqC("email", u.getEmail))
                                    .findOne } match {
             case None =>
@@ -73,10 +75,11 @@ object User{
                 user.name = u.getNickname
                 pm.makePersistent(user)
               }
-              Some(user)
-            case user => user
+              S.redirectTo("/users/edit")
+              userVar(Some(user))
+            case user => 
+              userVar(user)
           }
-          userVar(user)
           userVar.is
       }
     }
