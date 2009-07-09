@@ -37,6 +37,13 @@ object Base64{
 }
 
 object TwitterOps{
+  import java.text.SimpleDateFormat
+  import java.util.Locale
+
+  val df = new SimpleDateFormat("EEE MMM dd HH:mm:ss +0000 yyyy", Locale.US)
+  val formatter = new java.text.SimpleDateFormat("yyyyMMdd")
+  def today = formatter.format(new java.util.Date).toInt
+
   def checkMentions(): Box[XmlResponse] = {
     import com.jcraft.lift.model.Twitter
     import com.jcraft.lift.model.Model
@@ -55,10 +62,7 @@ object TwitterOps{
                                    "Basic "+Base64.encode(user+":"+passwd))
         urlConn.connect();
         urlConn.getResponseCode
-        import java.text.SimpleDateFormat
-        import java.util.Locale
 
-        val df = new SimpleDateFormat("EEE MMM dd HH:mm:ss +0000 yyyy", Locale.US)
         var _lastid = twitter.lastid
 
         val xml = 
@@ -70,34 +74,31 @@ object TwitterOps{
                ) yield {
 
              _lastid = id
-        val users = Model.withPM{ from(_, classOf[User])
-                                  .where(eqC("twitter", screen_name))
-                                  .resultList}
+            val users = Model.withPM{ from(_, classOf[User])
+                                      .where(eqC("twitter", screen_name))
+                                      .resultList}
 
-val formatter = new java.text.SimpleDateFormat("yyyyMMdd")
-def today = formatter.format(new java.util.Date).toInt
+            val Array(_, dataset, dataEntry, _date@_*) = text.split(" ")
+            val date  = if(_date.length==0) today
+                        else try{ _date(0).toInt }catch{ case e => today } 
 
-        val Array(_, dataset, dataEntry, _date@_*) = text.split(" ")
-        val date  = if(_date.length==0) today
-                    else try{ _date(0).toInt }catch{ case e => today } 
+            users.foreach{ u =>
+              u.data.toArray.foreach{ case d:Data =>
+                if(d.title == dataset){
+                  val de = DataEntry.create
+                  de.data = d.id
+                  de.date = date
+                  de.dataEntry = dataEntry
+                  de.save
+                }
+              }
+            } 
 
-        users.foreach{ u =>
-          u.data.toArray.foreach{ case d:Data =>
-            if(d.title == dataset){
-              val de = new DataEntry() 
-              de.data = d.id
-              de.date = date
-              de.dataEntry = dataEntry
-              Model.withPM{ _.makePersistent(de) }
-            }
-          }
-        } 
-
-      <div>
-        <span>{screen_name}</span>
-        <span>{text}</span>
-        <span>{created_at}</span>
-      </div>
+            <div>
+              <span>{screen_name}</span>
+              <span>{text}</span>
+              <span>{created_at}</span>
+            </div>
         }
 
         if(_lastid != twitter.lastid){
@@ -120,6 +121,10 @@ object GraphOps{
   def minf(a:Float, b:Float) = if(a<b) a else b
 
   def genURL(del:List[DataEntry], cumulative: Boolean):String={
+
+    if(del.length == 0){
+      return ""
+    }
 
     val data = if(cumulative){
       val cumulative = new Array[Float](del.length)

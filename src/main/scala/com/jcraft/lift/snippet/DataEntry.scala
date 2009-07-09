@@ -30,14 +30,10 @@ import _root_.javax.jdo.JDOUserException
 
 import _root_.org.scala_libs.jdo._
 import _root_.org.scala_libs.jdo.criterion._
-import _root_.java.util.Date
 import com.google.appengine.api.datastore.{Text => DText}
 
 object DataEntryOps {
   object dataVar extends SessionVar[Option[Data]](None)
-
-  private val formatter = new java.text.SimpleDateFormat("yyyyMMdd")
-  def today = formatter.format(new Date).toInt
 }
 
 class DataEntryOps {
@@ -47,14 +43,14 @@ class DataEntryOps {
 
   object deVar extends RequestVar[Option[DataEntry]](None)
   lazy val dataEntry = deVar.is getOrElse {
-    new DataEntry() match{
+    DataEntry.create match{
       case de => 
         de.data = data.get.id
-        de.date = today
         de
     }
   }
 
+  // TODO pagination
   def list (xhtml : NodeSeq) : NodeSeq = {
     val dataentries = {
       val where = data match {
@@ -86,7 +82,7 @@ class DataEntryOps {
            "delete" -> {if(isEditable)
                           link("showData", 
                                () => {
-                                 Model.withPM{ _.deletePersistent(de)}
+                                 de.delete
                                  DataOps.resetImage(data.get)
                                },
                                textDelete)
@@ -152,7 +148,7 @@ class DataEntryOps {
       for (line <- scala.io.Source.fromBytes(f.file).getLines){
         line.stripLineEnd match {
           case pattern(date, dataEntry) => 
-            val de = new DataEntry
+            val de = DataEntry.create
             de.data = data.get.id
             de.date = date.split("-").mkString.split("/").mkString.toInt
             de.dataEntry = dataEntry

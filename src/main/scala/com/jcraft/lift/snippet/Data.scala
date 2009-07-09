@@ -53,10 +53,8 @@ object DataOps{
 
     val url = GraphOps.genURL(des, d.cumulative)
 
-    Model.withPM{ pm =>
-      d.image = new DText(url)
-      pm.makePersistent(d)
-    }
+    d.image = new DText(url)
+    d.save
   }
 }
 
@@ -64,8 +62,17 @@ class DataOps {
   import DataOps.{textAdd, textEdit, textDelete}
   import DataOps.stojb
 
+  object dataVar extends RequestVar[Option[Data]](None)
+  lazy val data = dataVar.is getOrElse{
+    User.currentUser map {user =>
+      val d = Data.create
+      d.user = user
+      d
+    } getOrElse {S.error("You need to login"); null}
+  }
+
   def addLink (xhtml : NodeSeq) : NodeSeq = {
-    if(User.loggedIn_?) link("add", () => (), textAdd)
+    if(User.loggedIn_?) link("add", () => dataVar(None), textAdd)
     else xhtml
   }
 
@@ -86,9 +93,7 @@ class DataOps {
                       else 
                        textEdit} ,
            "delete" -> {if(isEditable(data))
-                         link("list", 
-                              () => Model.withPM{ _.deletePersistent(data)},
-                              textDelete)
+                         link("list", () => data.delete, textDelete)
                         else 
                           textDelete}))
   }
@@ -107,15 +112,6 @@ class DataOps {
           ))
   }
 
-  object dataVar extends RequestVar[Option[Data]](None)
-  lazy val data = dataVar.is getOrElse{
-    User.currentUser map {user =>
-      val d = new Data()
-      d.user = user
-      d
-    } getOrElse {S.error("You need to login"); null}
-  }
-
   def is_valid_Data_? (toCheck : Data) : Boolean ={
     List((if (toCheck.title.length == 0) { 
             S.error("You must provide a title"); false 
@@ -131,15 +127,7 @@ class DataOps {
     def doAdd () = 
       if (is_valid_Data_?(data)) {
         try{
-          Model.withPM{ pm =>
-            if(data.id == null){
-              data.user.data.add(data)
-              pm.makePersistent(data.user)
-            }
-            else{
-              pm.makePersistent(data)
-            }
-          }
+          data.save
           DataOps.resetImage(data)
           redirectTo("list")
         } 
@@ -152,6 +140,7 @@ class DataOps {
     val choices = Array("true", "false").map { i => (i -> i) }
 
     lazy val current = data
+
     bind("data", xhtml,
          "id" -> hidden(() => dataVar(Some(current))),
          "title" -> text(data.title, data.title=_),

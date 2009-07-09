@@ -40,8 +40,31 @@ class Data {
   var image : Text = new Text("")
 
   @Persistent
-  var cumulative : java.lang.Boolean = java.lang.Boolean.TRUE
+  var cumulative : java.lang.Boolean = java.lang.Boolean.FALSE
 
   @Persistent
   var user : User = _
+
+  def save()={
+    val data = this
+    Model.withPM{ pm =>
+      if(data.id == null){
+        data.user.data.add(data)
+        pm.makePersistent(data.user)
+      }
+      else{
+        pm.makePersistent(data)
+      }
+    }
+  }
+
+  def delete()={
+    val data = this 
+    User.userVar(None)
+    Model.withPM{ _.deletePersistent(data)}
+  }
+}
+
+object Data{
+  def create() = new Data
 }

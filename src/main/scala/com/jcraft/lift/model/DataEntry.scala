@@ -32,4 +32,26 @@ class DataEntry {
 
   @Persistent
   var dataEntry : java.lang.String = ""
+
+  def delete()={
+    val de = this 
+    Model.withPM{ _.deletePersistent(de)}
+  }
+
+  // TODO DataEntry must be unique for date field.
+  def save()={
+    val de = this 
+    Model.withPM{_.makePersistent(de)}
+  }
+}
+
+object DataEntry{
+  import _root_.java.util.Date
+  private val formatter = new java.text.SimpleDateFormat("yyyyMMdd")
+  def today = formatter.format(new Date).toInt
+  def create() = new DataEntry match{
+    case de =>
+      de.date = today
+      de
+  }
 }
