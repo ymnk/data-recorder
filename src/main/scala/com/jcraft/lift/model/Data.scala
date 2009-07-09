@@ -66,5 +66,7 @@ class Data {
 }
 
 object Data{
+  import Model._
+  def findAll() = Model.withPM{ from(_, classOf[Data]).resultList }
   def create() = new Data
 }

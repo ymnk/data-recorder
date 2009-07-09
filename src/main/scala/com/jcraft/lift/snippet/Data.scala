@@ -77,7 +77,7 @@ class DataOps {
   }
 
   def list (xhtml : NodeSeq) : NodeSeq = {
-    val data = Model.withPM{ from(_, classOf[Data]).resultList }
+    val data = Data.findAll
 
     val uemail = User.currentUser.map(_.email) getOrElse ""
     def isEditable(data:Data) = data.user.email == uemail
@@ -99,7 +99,7 @@ class DataOps {
   }
 
   def listGraph (xhtml : NodeSeq) : NodeSeq = {
-    val data = Model.withPM{ from(_, classOf[Data]).resultList }
+    val data = Data.findAll
     data.flatMap(data =>
       bind("data", xhtml,
            "description" -> Text(data.description),

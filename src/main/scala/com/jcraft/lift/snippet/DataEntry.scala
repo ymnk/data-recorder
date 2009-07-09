@@ -96,7 +96,7 @@ class DataEntryOps {
     def doAdd () = 
       if (is_valid_DataEntry_?(dataEntry)) {
         try{
-          Model.withPM{ _.makePersistent(dataEntry) }
+          dataEntry.save
           DataOps.resetImage(data.get)
           redirectTo("showData")
         } 

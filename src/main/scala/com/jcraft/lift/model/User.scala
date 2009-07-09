@@ -46,10 +46,15 @@ class User {
   @Persistent
   var twitter : String = ""
 
+  def save() = {
+    val user = this
+    Model.withPM{ _.makePersistent(user) }
+  }
 }
 
 object User{
   import _root_.net.liftweb.http.S
+  import Model._
 
   object userVar extends SessionVar[Option[User]](None)
 
@@ -85,4 +90,6 @@ object User{
       }
     }
   }
+
+  def findAll() = Model.withPM{ from(_, classOf[User]).resultList } 
 }

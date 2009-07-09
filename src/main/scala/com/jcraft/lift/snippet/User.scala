@@ -28,10 +28,11 @@ import _root_.org.scala_libs.jdo._
 import _root_.org.scala_libs.jdo.criterion._
 
 class UserOps {
+  object userVar extends RequestVar(new User())
+  lazy val user = userVar.is
 
   def list (xhtml : NodeSeq) : NodeSeq = {
-    val users = Model.withPM{ from(_, classOf[User]).resultList }
-
+    val users = User.findAll
     def findDataByUser(a:User) = {
       Model.withPM{ 
         from(_, classOf[Data])
@@ -39,7 +40,6 @@ class UserOps {
             .resultList 
       }
     }
-
     import SHtml.link
     users.flatMap(user =>
       bind("user", xhtml,
@@ -53,16 +53,13 @@ class UserOps {
                             Text(?("Delete")))))
   }
 
-  object userVar extends RequestVar(new User())
-  lazy val user = userVar.is
-
   def add (xhtml : NodeSeq) : NodeSeq = {
     def doAdd () = {
       if (user.name.length == 0) {
         error("emptyUser", "The user's name cannot be blank")
       } 
       else {
-        Model.withPM{ _.makePersistent(user) }
+        user.save
         redirectTo("/")
       }
     }
@@ -84,7 +81,7 @@ class UserOps {
         error("emptyUser", "The user's name cannot be blank")
       } 
       else {
-        Model.withPM{ _.makePersistent(user) }
+        user.save
         redirectTo("/")
       }
     }
