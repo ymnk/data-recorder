@@ -20,7 +20,7 @@ import util.{Helpers, Box, Full, Empty, Failure, Log, NamedPF, Props}
 import http._
 import sitemap._
 import Helpers._
-
+import provider._
 import _root_.com.jcraft.lift.model.Twitter
 import _root_.com.jcraft.lift.snippet.TwitterOps
 
@@ -75,7 +75,9 @@ class Boot {
     }
   }
 
-  private def makeUtf8(req: HttpServletRequest): Unit = {req.setCharacterEncoding("UTF-8")}
+  private def makeUtf8(req: HTTPRequest) = {
+    req.setCharacterEncoding("UTF-8")
+  }
 }
 
 object MenuInfo {

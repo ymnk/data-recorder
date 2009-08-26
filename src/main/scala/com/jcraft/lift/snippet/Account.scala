@@ -39,7 +39,7 @@ class Account {
     } getOrElse {
       SHtml.link("/",
                  () => {
-                   val myuri = S.request.open_!.request.getRequestURI
+                   val myuri = S.request.open_!.request.uri
                    S.redirectTo(userService.createLoginURL(myuri))
                  },
                  Text(?("Log in")))
